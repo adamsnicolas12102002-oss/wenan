@@ -1,0 +1,1000 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>旅游朋友圈文案生成器</title>
+  <style>
+    :root {
+      --ink: #13213a;
+      --muted: #6d7788;
+      --line: rgba(148, 163, 184, .28);
+      --blue: #3f8cff;
+      --violet: #8c78f4;
+      --pink: #ff7483;
+      --green: #73bf6a;
+      --orange: #f7a12d;
+      --sky: #d9f1ff;
+      --panel: rgba(255, 255, 255, .88);
+      --shadow: 0 18px 45px rgba(44, 106, 164, .22);
+      font-family: "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 15% 12%, rgba(255,255,255,.96) 0 10%, transparent 24%),
+        linear-gradient(180deg, #a9dcff 0%, #e7f7ff 47%, #c7edff 100%);
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      inset: auto 0 0;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    body::before {
+      top: 0;
+      background:
+        linear-gradient(165deg, transparent 0 55%, rgba(255,255,255,.62) 56% 57%, transparent 58%),
+        radial-gradient(ellipse at 65% 30%, rgba(255,255,255,.62), transparent 26%),
+        radial-gradient(ellipse at 30% 25%, rgba(255,255,255,.72), transparent 28%);
+    }
+
+    body::after {
+      height: 34vh;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,.48)),
+        repeating-linear-gradient(0deg, rgba(80, 166, 216, .2) 0 2px, transparent 2px 44px);
+    }
+
+    button,
+    select,
+    input {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+    }
+
+    .shell {
+      width: min(430px, 100%);
+      margin: 0 auto;
+      padding: 10px 10px 24px;
+    }
+
+    .phone {
+      position: relative;
+      overflow: hidden;
+      min-height: calc(100vh - 20px);
+      border: 8px solid rgba(255, 255, 255, .94);
+      border-radius: 24px;
+      background: rgba(247, 252, 255, .76);
+      box-shadow: 0 20px 60px rgba(45, 127, 188, .32);
+      backdrop-filter: blur(16px);
+    }
+
+    .hero {
+      position: relative;
+      min-height: 252px;
+      padding: 18px 16px 0;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(235, 249, 255, .94), rgba(213, 240, 255, .54) 62%, rgba(255,255,255,0)),
+        linear-gradient(150deg, #f8fdff 0%, #d8f0ff 42%, #b4daf1 100%);
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      left: -70px;
+      right: -80px;
+      bottom: 0;
+      height: 92px;
+      background:
+        linear-gradient(170deg, transparent 0 36%, rgba(255,255,255,.65) 37% 39%, transparent 40%),
+        linear-gradient(165deg, transparent 0 52%, rgba(101, 178, 220, .36) 53% 55%, transparent 56%),
+        linear-gradient(176deg, rgba(116, 190, 228, .18), rgba(54, 143, 200, .28));
+      clip-path: polygon(0 40%, 25% 34%, 44% 50%, 72% 24%, 100% 42%, 100% 100%, 0 100%);
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -16px;
+      bottom: 22px;
+      width: 128px;
+      height: 60px;
+      border-radius: 18px 18px 8px 8px;
+      background: #8dcfe9;
+      box-shadow:
+        inset 0 -12px 0 rgba(42, 111, 143, .18),
+        0 12px 20px rgba(47, 123, 166, .18);
+    }
+
+    .title-wrap {
+      position: relative;
+      z-index: 2;
+      margin-top: 22px;
+      text-align: center;
+    }
+
+    h1 {
+      position: relative;
+      margin: 0 auto;
+      max-width: 340px;
+      font-size: clamp(42px, 12vw, 62px);
+      line-height: 1.02;
+      letter-spacing: 0;
+      color: #102039;
+      text-shadow: 0 3px 0 rgba(255,255,255,.92);
+      font-weight: 900;
+    }
+
+    h1::before {
+      content: "✦";
+      position: absolute;
+      left: 0;
+      top: 10px;
+      color: #ffd452;
+      font-size: 27px;
+      text-shadow: none;
+    }
+
+    .ribbon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 33px;
+      margin-top: 13px;
+      padding: 0 34px;
+      color: #1d2b3f;
+      font-size: 15px;
+      font-weight: 700;
+      background: #ffda5d;
+      clip-path: polygon(7% 0, 93% 0, 100% 50%, 93% 100%, 7% 100%, 0 50%);
+    }
+
+    .paper-plane {
+      position: absolute;
+      z-index: 2;
+      right: 36px;
+      top: 76px;
+      width: 58px;
+      height: 45px;
+      color: #27354a;
+    }
+
+    .paper-plane::before {
+      content: "";
+      position: absolute;
+      inset: 6px 6px auto auto;
+      width: 40px;
+      height: 25px;
+      border: 2px solid currentColor;
+      clip-path: polygon(0 15%, 100% 0, 54% 100%);
+      transform: rotate(-10deg);
+      opacity: .82;
+    }
+
+    .paper-plane::after {
+      content: "";
+      position: absolute;
+      left: -44px;
+      bottom: 0;
+      width: 78px;
+      height: 36px;
+      border-bottom: 2px dashed rgba(39, 53, 74, .64);
+      border-radius: 50%;
+      transform: rotate(-18deg);
+    }
+
+    .palm {
+      position: absolute;
+      z-index: 2;
+      left: -25px;
+      top: 74px;
+      width: 94px;
+      height: 96px;
+      transform: rotate(-15deg);
+    }
+
+    .palm span {
+      position: absolute;
+      left: 42px;
+      top: 42px;
+      width: 62px;
+      height: 11px;
+      border-radius: 100% 0;
+      background: linear-gradient(90deg, #328d50, #a1c553);
+      transform-origin: 0 50%;
+      box-shadow: 0 2px 0 rgba(0,0,0,.06);
+    }
+
+    .palm span:nth-child(1) { transform: rotate(-58deg); }
+    .palm span:nth-child(2) { transform: rotate(-34deg); }
+    .palm span:nth-child(3) { transform: rotate(-12deg); }
+    .palm span:nth-child(4) { transform: rotate(11deg); }
+    .palm span:nth-child(5) { transform: rotate(34deg); }
+    .palm span:nth-child(6) { transform: rotate(56deg); }
+
+    .polaroid {
+      position: absolute;
+      z-index: 2;
+      left: 14px;
+      bottom: 8px;
+      width: 88px;
+      height: 108px;
+      padding: 7px 7px 19px;
+      border-radius: 8px;
+      background: #fff;
+      transform: rotate(-7deg);
+      box-shadow: 0 12px 22px rgba(46, 116, 164, .22);
+    }
+
+    .polaroid::before {
+      content: "";
+      display: block;
+      width: 100%;
+      height: 100%;
+      border-radius: 5px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.5), transparent 25%),
+        linear-gradient(160deg, transparent 0 58%, #e6c478 59% 66%, transparent 67%),
+        linear-gradient(176deg, #b7e3ff 0 48%, #46addb 49% 60%, #e8f7ff 61% 100%);
+    }
+
+    .polaroid::after {
+      content: "";
+      position: absolute;
+      right: -8px;
+      top: -13px;
+      width: 24px;
+      height: 19px;
+      border-radius: 3px;
+      background: rgba(255, 210, 80, .82);
+      transform: rotate(8deg);
+    }
+
+    .van {
+      position: absolute;
+      z-index: 3;
+      right: -8px;
+      bottom: 18px;
+      width: 112px;
+      height: 58px;
+    }
+
+    .van::before {
+      content: "";
+      position: absolute;
+      left: 6px;
+      top: 14px;
+      width: 92px;
+      height: 34px;
+      border: 2px solid #27425b;
+      border-radius: 12px 14px 8px 8px;
+      background:
+        linear-gradient(90deg, transparent 0 62%, rgba(255,255,255,.65) 63% 65%, transparent 66%),
+        linear-gradient(#e7f7ff 0 46%, #79c7e6 47% 100%);
+      box-shadow: inset 0 -8px 0 rgba(44, 112, 148, .2);
+    }
+
+    .van::after {
+      content: "";
+      position: absolute;
+      left: 18px;
+      bottom: 2px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #1b2e42;
+      box-shadow: 58px 0 0 #1b2e42;
+    }
+
+    .form-card {
+      position: relative;
+      z-index: 4;
+      margin: -8px 14px 22px;
+      padding: 16px;
+      border-radius: 17px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .field {
+      display: grid;
+      grid-template-columns: 42px 1fr minmax(116px, auto);
+      align-items: center;
+      min-height: 52px;
+      border-bottom: 1px solid var(--line);
+      gap: 10px;
+    }
+
+    .field:last-of-type {
+      border-bottom: 0;
+    }
+
+    .badge {
+      display: grid;
+      place-items: center;
+      width: 31px;
+      height: 31px;
+      border-radius: 11px;
+      color: #fff;
+      font-weight: 900;
+      box-shadow: inset 0 -4px 8px rgba(0,0,0,.08);
+    }
+
+    .badge.place { background: linear-gradient(145deg, #ff9aa6, #ff6576); }
+    .badge.people { background: linear-gradient(145deg, #ffe06c, #ffc32d); }
+    .badge.mood { background: linear-gradient(145deg, #7db6ff, #467dff); }
+    .badge.style { background: linear-gradient(145deg, #6fddb3, #34b87c); }
+
+    .label {
+      min-width: 0;
+      font-size: 17px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .field select,
+    .field input {
+      width: 100%;
+      min-width: 0;
+      height: 40px;
+      padding: 0 26px 0 6px;
+      color: #111827;
+      text-align: right;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      appearance: none;
+    }
+
+    .select-wrap {
+      position: relative;
+    }
+
+    .select-wrap::after {
+      content: "";
+      position: absolute;
+      right: 4px;
+      top: 50%;
+      width: 10px;
+      height: 10px;
+      border-right: 2px solid #9aa5b3;
+      border-bottom: 2px solid #9aa5b3;
+      transform: translateY(-65%) rotate(45deg);
+      pointer-events: none;
+    }
+
+    .generate {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      min-height: 51px;
+      margin-top: 15px;
+      border-radius: 19px;
+      color: #fff;
+      font-size: 19px;
+      font-weight: 900;
+      letter-spacing: 0;
+      background: linear-gradient(100deg, #438cff, #8777f2);
+      box-shadow: 0 12px 22px rgba(85, 116, 229, .32);
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+
+    .generate:active {
+      transform: translateY(1px) scale(.99);
+      box-shadow: 0 8px 14px rgba(85, 116, 229, .3);
+    }
+
+    .spark {
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    .results {
+      position: relative;
+      z-index: 3;
+      padding: 0 14px 18px;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 21px;
+      line-height: 1.1;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    h2::after {
+      content: "";
+      display: block;
+      width: 86px;
+      height: 3px;
+      margin-top: 5px;
+      border-radius: 99px;
+      background: linear-gradient(90deg, #5298ff, transparent);
+    }
+
+    .refresh {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      color: #3488f8;
+      background: transparent;
+      font-weight: 700;
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding-bottom: 4px;
+    }
+
+    .tab {
+      flex: 0 0 auto;
+      min-width: 72px;
+      height: 36px;
+      padding: 0 12px;
+      border: 1px solid rgba(148, 163, 184, .35);
+      border-radius: 18px;
+      color: #1f2937;
+      background: rgba(255,255,255,.86);
+      box-shadow: 0 6px 13px rgba(57, 92, 132, .08);
+      transition: .18s ease;
+    }
+
+    .tab.active {
+      color: #3b82ff;
+      border-color: rgba(72, 140, 255, .6);
+      background: rgba(240, 247, 255, .96);
+      box-shadow: inset 0 0 0 1px rgba(72, 140, 255, .08);
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .copy-card {
+      position: relative;
+      min-height: 144px;
+      padding: 16px 14px 42px;
+      border: 1px solid;
+      border-radius: 13px;
+      background: rgba(255,255,255,.82);
+      box-shadow: 0 8px 22px rgba(49, 84, 128, .08);
+    }
+
+    .copy-card.xhs {
+      border-color: rgba(255, 116, 131, .32);
+      background: linear-gradient(135deg, rgba(255, 248, 249, .94), rgba(255,255,255,.9));
+    }
+
+    .copy-card.friend {
+      border-color: rgba(115, 191, 106, .34);
+      background: linear-gradient(135deg, rgba(248, 255, 246, .94), rgba(255,255,255,.9));
+    }
+
+    .copy-card.emo {
+      border-color: rgba(140, 120, 244, .34);
+      background: linear-gradient(135deg, rgba(250, 247, 255, .95), rgba(255,255,255,.9));
+    }
+
+    .copy-card.fun {
+      border-color: rgba(247, 161, 45, .34);
+      background: linear-gradient(135deg, rgba(255, 250, 241, .95), rgba(255,255,255,.9));
+    }
+
+    .copy-card.title-card {
+      border-color: rgba(63, 140, 255, .34);
+      min-height: 98px;
+      background: linear-gradient(135deg, rgba(243, 250, 255, .95), rgba(255,255,255,.9));
+    }
+
+    .copy-card::after {
+      content: "✦";
+      position: absolute;
+      right: 23px;
+      top: 30px;
+      color: currentColor;
+      opacity: .38;
+    }
+
+    .card-name {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+      font-size: 17px;
+      font-weight: 900;
+    }
+
+    .xhs .card-name,
+    .xhs .copy { color: var(--pink); }
+    .friend .card-name,
+    .friend .copy { color: var(--green); }
+    .emo .card-name,
+    .emo .copy { color: var(--violet); }
+    .fun .card-name,
+    .fun .copy { color: var(--orange); }
+    .title-card .card-name,
+    .title-card .copy { color: var(--blue); }
+
+    .content {
+      margin: 0;
+      color: #111827;
+      font-size: 15px;
+      line-height: 1.65;
+      white-space: pre-line;
+      word-break: break-word;
+    }
+
+    .copy {
+      position: absolute;
+      right: 15px;
+      bottom: 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: transparent;
+      font-weight: 800;
+    }
+
+    .copy-icon {
+      width: 13px;
+      height: 16px;
+      border: 1.8px solid currentColor;
+      border-radius: 3px;
+      box-shadow: -3px 3px 0 rgba(255,255,255,.8), -3px 3px 0 -1px currentColor;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      z-index: 20;
+      min-width: 126px;
+      padding: 11px 16px;
+      border-radius: 999px;
+      color: #fff;
+      text-align: center;
+      font-weight: 800;
+      background: rgba(18, 30, 50, .88);
+      opacity: 0;
+      transform: translate(-50%, 12px);
+      pointer-events: none;
+      transition: .22s ease;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    @media (min-width: 720px) {
+      .shell {
+        width: min(860px, 100%);
+        padding: 20px;
+      }
+
+      .phone {
+        border-radius: 28px;
+      }
+
+      .hero {
+        min-height: 318px;
+        padding-top: 24px;
+      }
+
+      h1 {
+        max-width: 520px;
+        font-size: 58px;
+      }
+
+      .ribbon {
+        font-size: 19px;
+        min-height: 38px;
+      }
+
+      .form-card {
+        margin: -18px 22px 24px;
+        padding: 20px 28px 24px;
+        border-radius: 18px;
+      }
+
+      .results {
+        padding: 0 22px 24px;
+      }
+
+      .cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .title-card {
+        grid-column: 1 / -1;
+      }
+
+      .van {
+        right: 16px;
+        bottom: 28px;
+        transform: scale(1.35);
+        transform-origin: right bottom;
+      }
+
+      .polaroid {
+        left: 28px;
+        bottom: 18px;
+        transform: rotate(-7deg) scale(1.2);
+      }
+    }
+
+    @media (max-width: 380px) {
+      .phone {
+        border-width: 6px;
+        border-radius: 21px;
+      }
+
+      .hero {
+        min-height: 234px;
+      }
+
+      h1 {
+        font-size: 38px;
+      }
+
+      .field {
+        grid-template-columns: 36px minmax(76px, 1fr) minmax(116px, 1.4fr);
+        gap: 7px;
+      }
+
+      .label,
+      .field select,
+      .field input {
+        font-size: 15px;
+      }
+
+      .generate {
+        font-size: 17px;
+      }
+
+      .tab {
+        min-width: 68px;
+        padding: 0 10px;
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="phone" aria-label="旅游朋友圈文案生成器">
+      <div class="hero">
+        <div class="palm" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <div class="paper-plane" aria-hidden="true"></div>
+        <div class="polaroid" aria-hidden="true"></div>
+        <div class="van" aria-hidden="true"></div>
+        <div class="title-wrap">
+          <h1>旅游朋友圈<br>文案生成器</h1>
+          <div class="ribbon">一键生成 · 各种风格文案</div>
+        </div>
+      </div>
+
+      <form class="form-card" id="copyForm">
+        <label class="field">
+          <span class="badge place">⌖</span>
+          <span class="label">去哪儿?</span>
+          <input id="place" type="text" value="大理洱海" placeholder="输入目的地">
+        </label>
+
+        <label class="field">
+          <span class="badge people">●●</span>
+          <span class="label">和谁?</span>
+          <input id="people" type="text" value="和闺蜜" placeholder="输入同行人">
+        </label>
+
+        <label class="field">
+          <span class="badge mood">☺</span>
+          <span class="label">今天心情?</span>
+          <span class="select-wrap">
+            <select id="mood">
+              <option>开心</option>
+              <option>松弛</option>
+              <option>治愈</option>
+              <option>想发疯</option>
+              <option>有点 emo</option>
+              <option>自由</option>
+            </select>
+          </span>
+        </label>
+
+        <label class="field">
+          <span class="badge style">▦</span>
+          <span class="label">想发什么风格?</span>
+          <span class="select-wrap">
+            <select id="style">
+              <option>所有风格</option>
+              <option>小红书文案</option>
+              <option>朋友圈文案</option>
+              <option>emo 文案</option>
+              <option>搞笑文案</option>
+              <option>氛围感标题</option>
+            </select>
+          </span>
+        </label>
+
+        <button class="generate" type="submit"><span class="spark">✦✦</span>一键生成文案</button>
+      </form>
+
+      <section class="results" aria-live="polite">
+        <div class="section-head">
+          <h2>为你生成的文案</h2>
+          <button class="refresh" id="refresh" type="button">换一批 ↻</button>
+        </div>
+
+        <div class="tabs" role="tablist" aria-label="文案类型">
+          <button class="tab active" type="button" data-filter="all">全部</button>
+          <button class="tab" type="button" data-filter="xhs">小红书文案</button>
+          <button class="tab" type="button" data-filter="friend">朋友圈文案</button>
+          <button class="tab" type="button" data-filter="emo">emo 文案</button>
+          <button class="tab" type="button" data-filter="fun">搞笑文案</button>
+          <button class="tab" type="button" data-filter="title-card">氛围感标题</button>
+        </div>
+
+        <div class="cards" id="cards"></div>
+      </section>
+    </section>
+  </main>
+
+  <div class="toast" id="toast">已复制</div>
+
+  <script>
+    const scenic = {
+      "大理洱海": ["洱海的风", "苍山的云", "海边的黄昏", "蓝到发光的湖面"],
+      "云南丽江": ["古城的石板路", "雪山的风", "屋檐下的铃声", "慢下来的午后"],
+      "杭州西湖": ["西湖的晚风", "断桥的光", "湖面的粼粼波纹", "柳树下的温柔"],
+      "重庆山城": ["山城的夜", "嘉陵江的风", "轻轨穿过的楼", "火锅升起的烟火气"],
+      "厦门鼓浪屿": ["海岛的琴声", "鼓浪屿的巷子", "转角遇见的花", "海浪拍过的岸"],
+      "成都街头": ["成都的慢", "巷口的茶香", "热辣的烟火", "街边晒着的太阳"],
+      "青岛海边": ["青岛的浪", "栈桥的海风", "啤酒味的夏天", "海边吹来的自由"],
+      "新疆草原": ["草原的风", "远处的雪山", "铺开的绿色", "落日下的旷野"],
+      "三亚海岛": ["三亚的海", "椰林的影子", "晒到发亮的假期", "海浪送来的快乐"],
+      "北京胡同": ["胡同里的光", "红墙旁的风", "老城的午后", "屋檐下的慢时光"]
+    };
+
+    const peopleTone = {
+      "和闺蜜": ["和闺蜜", "我们", "姐妹"],
+      "和朋友": ["和朋友", "我们", "这群人"],
+      "和对象": ["和你", "我们", "喜欢的人"],
+      "和家人": ["和家人", "我们", "一家人"],
+      "一个人": ["我", "一个人", "自己"],
+      "和同事": ["和同事", "我们", "临时逃离工位的人"]
+    };
+
+    const defaultScenes = ["路上的风", "眼前的风景", "今天的阳光", "目的地的晚风", "照片里的光"];
+
+    const moodLines = {
+      "开心": ["快乐有了实感", "今天份的开心超标", "嘴角比风先到达目的地"],
+      "松弛": ["把日子过慢一点", "整个人都被风吹松了", "不赶路的时候最像生活"],
+      "治愈": ["被风和景色重新充满电", "心里的褶皱被一点点抚平", "所有烦恼都短暂退潮"],
+      "想发疯": ["班味必须散", "精神状态领先一步放假", "出来玩就是为了证明我还活着"],
+      "有点 emo": ["把没说出口的话交给风", "快乐里也藏着一点旧情绪", "看见风景，也想起从前"],
+      "自由": ["自由这件事终于有了形状", "风往哪吹，我就往哪走", "没有目的地也很浪漫"]
+    };
+
+    const templates = {
+      xhs: [
+        ({place, people, mood, scene}) => `${scene}停在了今天，\n${people[1]}停在了喜欢的瞬间。\n不用赶路，不用解释，\n只负责把${mood[0]}装进口袋。`,
+        ({place, people, mood, scene}) => `${place}真的很适合发呆。\n${scene}、慢下来的时间，\n还有${people[0]}一起浪费掉的下午。\n这趟很值得。`,
+        ({place, people, mood, scene}) => `来${place}，建议把工作脑先关掉。\n让${scene}替你开场，\n让${mood[1]}替你收尾。\n照片不用太完美，快乐是真的就行。`,
+        ({place, people, mood, scene}) => `${place}旅行小记：\n天气刚好，风也刚好，\n${people[0]}把普通一天过成了高光。\n这一站，值得单独发一条。`,
+        ({place, people, mood, scene}) => `今天的关键词：${place}、${scene}、${mood[2]}。\n没有复杂攻略，\n只有一些被风吹亮的瞬间。\n适合收藏，也适合想念。`,
+        ({place, people, mood, scene}) => `把${place}加入人生相册。\n${scene}很温柔，\n${people[1]}也被照顾得很好。\n原来出门走走，真的会变轻。`,
+        ({place, people, mood, scene}) => `不是滤镜好看，\n是${place}本来就很会浪漫。\n和${people[2]}一起把时间放慢，\n连发呆都变得有意义。`,
+        ({place, people, mood, scene}) => `给最近的自己安排了一次出逃。\n目的地：${place}。\n收获：${scene}、好照片，\n以及一点重新喜欢生活的力气。`
+      ],
+      friend: [
+        ({place, people, mood, scene}) => `${scene}吹走了烦恼，\n留下了${mood[0]}和照片。\n今天份的快乐，\n是${people[0]}一起的旅行~`,
+        ({place, people, mood, scene}) => `到${place}打卡成功。\n风景很好，天气很好，\n${people[1]}也刚刚好。\n普通日子因为出门变得闪闪发亮。`,
+        ({place, people, mood, scene}) => `库存更新：${place}。\n${scene}很好看，\n${people[1]}也很会玩。\n愿每次出发都能遇见好心情。`,
+        ({place, people, mood, scene}) => `${place}一日份快乐已到账。\n有风、有景、有${people[2]}，\n还有一些不用修也很喜欢的照片。`,
+        ({place, people, mood, scene}) => `今天不聊工作，\n只聊${place}的风和路。\n${people[1]}负责开心，\n照片负责证明我们来过。`,
+        ({place, people, mood, scene}) => `把日子过成喜欢的样子：\n去${place}，见${scene}，\n和${people[2]}一起慢慢走。\n就很好。`,
+        ({place, people, mood, scene}) => `出门前是普通人，\n到${place}后是快乐人。\n今天的照片很多，\n但最想留下的是这份${mood[0]}。`,
+        ({place, people, mood, scene}) => `${scene}，刚好遇见。\n${people[0]}，刚好同行。\n这一趟没有什么大事，\n但每一秒都很值得。`
+      ],
+      emo: [
+        ({place, people, mood, scene}) => `${scene}很大，\n吹走了我的不开心，\n也吹起了我们回不去的从前。`,
+        ({place, people, mood, scene}) => `在${place}看风景，\n突然觉得人和路一样，\n有些会同行一段，\n有些只能留在照片里。`,
+        ({place, people, mood, scene}) => `${scene}没有替我说话，\n只是安静地路过。\n可我好像在这一刻，\n终于没那么难过了。`,
+        ({place, people, mood, scene}) => `来到${place}才发现，\n有些情绪不是想通的，\n是被风吹散的。`,
+        ({place, people, mood, scene}) => `${people[1]}走在${place}，\n看见很多好看的风景，\n也想起一些不能再回头的日子。`,
+        ({place, people, mood, scene}) => `${scene}很温柔，\n温柔到我差点以为，\n那些没说完的话也能有回声。`,
+        ({place, people, mood, scene}) => `照片里是${place}，\n心里是没被拍到的沉默。\n有些路走着走着，\n就只剩自己懂了。`,
+        ({place, people, mood, scene}) => `今天的风很轻，\n轻到像一场告别。\n在${place}，\n我把难过放慢了一点。`
+      ],
+      fun: [
+        ({place, people, mood, scene}) => `钱没了可以再赚，\n但班味必须散。\n来${place}的意义就是：\n证明我不是工作机器！😎`,
+        ({place, people, mood, scene}) => `今天在${place}的主要任务：\n拍照、吃饭、假装很松弛。\n实际情况：\n${people[1]}已经累到想原地托运。`,
+        ({place, people, mood, scene}) => `${scene}负责好看，\n${people[1]}负责乱拍。\n朋友圈负责营业，\n钱包负责沉默。`,
+        ({place, people, mood, scene}) => `来${place}前：我要拍氛围大片。\n来${place}后：哪里有吃的？\n果然旅行的尽头，\n还是碳水和躺平。`,
+        ({place, people, mood, scene}) => `今天不是出来玩的，\n是出来给精神状态做售后。\n${place}，你最好真的能治我。`,
+        ({place, people, mood, scene}) => `${people[0]}来${place}，\n主打一个随缘旅行。\n路线靠感觉，\n拍照靠命，\n快乐靠不看余额。`,
+        ({place, people, mood, scene}) => `上班让我沉默，\n${place}让我发疯。\n别问攻略，\n问就是跟着${scene}走。`,
+        ({place, people, mood, scene}) => `今日人设：旅行博主。\n真实状态：腿快走没了，\n但朋友圈必须美美营业。`
+      ],
+      "title-card": [
+        ({place, people, mood, scene}) => `#风与自由  #${place}日记  #浪漫收集计划  #今日份心动  #逃离城市计划`,
+        ({place, people, mood, scene}) => `#把${place}装进相册  #和快乐见面  #松弛感出逃  #旅行碎片  #今天不加班`,
+        ({place, people, mood, scene}) => `#${scene}  #在路上发光  #普通日子闪一下  #和风一起出发  #快乐续航中`,
+        ({place, people, mood, scene}) => `#去${place}吹吹风  #生活需要出片  #短暂逃离  #今天很值得  #旅行库存`,
+        ({place, people, mood, scene}) => `#${place}慢游  #被风景治愈  #和${people[2]}在路上  #松弛感日记  #照片会记得`,
+        ({place, people, mood, scene}) => `#浪漫不赶时间  #${place}限定  #把快乐存档  #出门见世界  #今日份自由`,
+        ({place, people, mood, scene}) => `#${scene}  #旅行碎片加载中  #这一刻很漂亮  #人间值得  #假期模式开启`,
+        ({place, people, mood, scene}) => `#去有风的地方  #${place}打卡  #把日子过亮一点  #心动瞬间  #出逃成功`
+      ]
+    };
+
+    const cardMeta = [
+      { key: "xhs", name: "小红书文案", icon: "♥" },
+      { key: "friend", name: "朋友圈文案", icon: "▣" },
+      { key: "emo", name: "emo 文案", icon: "☾" },
+      { key: "fun", name: "搞笑文案", icon: "☻" },
+      { key: "title-card", name: "氛围感标题", icon: "✦" }
+    ];
+
+    const form = document.querySelector("#copyForm");
+    const cards = document.querySelector("#cards");
+    const refresh = document.querySelector("#refresh");
+    const tabs = [...document.querySelectorAll(".tab")];
+    const toast = document.querySelector("#toast");
+    const styleSelect = document.querySelector("#style");
+    let activeFilter = "all";
+    let lastPayload = {};
+    let toastTimer;
+
+    function pick(list) {
+      return list[Math.floor(Math.random() * list.length)];
+    }
+
+    function buildPayload() {
+      const place = document.querySelector("#place").value.trim() || "远方";
+      const peopleValue = document.querySelector("#people").value.trim() || "一个人";
+      const moodValue = document.querySelector("#mood").value;
+      const people = peopleTone[peopleValue] || [
+        peopleValue,
+        peopleValue === "一个人" ? "我" : "我们",
+        peopleValue.replace(/^和/, "") || "同行的人"
+      ];
+      return {
+        place,
+        scene: pick(scenic[place] || defaultScenes.map(item => `${place}的${item.replace(/^目的地的/, "")}`)),
+        people,
+        mood: moodLines[moodValue]
+      };
+    }
+
+    function render(filter = activeFilter) {
+      activeFilter = filter;
+      const selected = styleSelect.value;
+      const styleMap = {
+        "小红书文案": "xhs",
+        "朋友圈文案": "friend",
+        "emo 文案": "emo",
+        "搞笑文案": "fun",
+        "氛围感标题": "title-card",
+        "所有风格": "all"
+      };
+      const preferred = styleMap[selected] || "all";
+      const finalFilter = filter === "all" ? preferred : filter;
+      const visibleCards = finalFilter === "all" ? cardMeta : cardMeta.filter(item => item.key === finalFilter);
+
+      cards.innerHTML = visibleCards.map(item => {
+        const text = pick(templates[item.key])(lastPayload);
+        return `
+          <article class="copy-card ${item.key}">
+            <div class="card-name"><span>${item.icon}</span>${item.name}</div>
+            <p class="content">${text}</p>
+            <button class="copy" type="button" data-copy="${encodeURIComponent(text)}">
+              <span class="copy-icon"></span>复制
+            </button>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function generate(filter = activeFilter) {
+      lastPayload = buildPayload();
+      render(filter);
+    }
+
+    async function copyText(text) {
+      let copied = false;
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(text);
+          copied = true;
+        }
+      } catch (error) {
+        copied = false;
+      }
+
+      if (!copied) {
+        const helper = document.createElement("textarea");
+        helper.value = text;
+        helper.style.position = "fixed";
+        helper.style.opacity = "0";
+        document.body.appendChild(helper);
+        helper.focus();
+        helper.select();
+        copied = document.execCommand("copy");
+        helper.remove();
+      }
+
+      toast.textContent = copied ? "已复制" : "已选中文案";
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove("show"), 1200);
+    }
+
+    form.addEventListener("submit", event => {
+      event.preventDefault();
+      tabs.forEach(tab => tab.classList.toggle("active", tab.dataset.filter === "all"));
+      generate("all");
+    });
+
+    refresh.addEventListener("click", () => generate(activeFilter));
+
+    styleSelect.addEventListener("change", () => {
+      tabs.forEach(tab => tab.classList.toggle("active", tab.dataset.filter === "all"));
+      generate("all");
+    });
+
+    tabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        tabs.forEach(item => item.classList.remove("active"));
+        tab.classList.add("active");
+        render(tab.dataset.filter);
+      });
+    });
+
+    cards.addEventListener("click", event => {
+      const button = event.target.closest(".copy");
+      if (!button) return;
+      copyText(decodeURIComponent(button.dataset.copy));
+    });
+
+    generate("all");
+  </script>
+</body>
+</html>
